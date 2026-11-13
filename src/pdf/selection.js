@@ -190,7 +190,7 @@ function getLineSelectionRect(line, charFrom, charTo) {
 	}
 }
 
-function getRectsFromChars(chars) {
+export function getRectsFromChars(chars) {
 	let lineRects = [];
 	let currentLineRect = null;
 	for (let char of chars) {

@@ -4,6 +4,7 @@ import {
 	getLineSelectionRanges,
 	getModifiedSelectionRanges,
 	getNodeOffset,
+	getRectsFromChars,
 	getRectRotationOnText,
 	getReversedSelectionRanges,
 	getSelectionRanges,
@@ -2767,6 +2768,18 @@ class PDFView {
 		// 	return;
 		// }
 
+		let chars = this._pdfPages[position.pageIndex]?.chars;
+		if (action.type === 'selectText'
+			&& this._tool.type === 'pointer'
+			&& !this._readOnly
+			&& event.type === 'mousedown' && event.button === 0 && event.detail === 2
+			&& !shift && !event.altKey && !event.ctrlKey && !event.metaKey
+			&& chars && !this._getSelectableOverlay(position)
+			&& !getRectsFromChars(chars).some(rect => quickIntersectRect(rect, position.rects[0]))) {
+			this._setSelectionRanges();
+			action = { type: 'text' };
+		}
+
 		this.action = action;
 		this.pointerDownPosition = position;
 		this.updateCursor(action);
@@ -2812,7 +2825,7 @@ class PDFView {
 		}
 		else if (action.type === 'text') {
 			let rect = position.rects[0];
-			let fontSize = this._tool.size;
+			let fontSize = this._tools.text.size;
 			let newPosition = {
 				pageIndex: position.pageIndex,
 				fontSize,
@@ -2826,7 +2839,7 @@ class PDFView {
 			};
 			this._onAddAnnotation({
 				type: 'text',
-				color: this._tool.color,
+				color: this._tools.text.color,
 				pageLabel: this._getPageLabel(this.pointerDownPosition.pageIndex, true),
 				sortIndex: getSortIndex(this._pdfPages, newPosition),
 				position: newPosition
