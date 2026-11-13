@@ -2775,7 +2775,7 @@ class PDFView {
 			&& event.type === 'mousedown' && event.button === 0 && event.detail === 2
 			&& !shift && !event.altKey && !event.ctrlKey && !event.metaKey
 			&& chars && !this._getSelectableOverlay(position)
-			&& !getRectsFromChars(chars).some(rect => quickIntersectRect(rect, position.rects[0]))) {
+			&& !getRectsFromChars(chars, 'rect').some(rect => quickIntersectRect(rect, position.rects[0]))) {
 			this._setSelectionRanges();
 			action = { type: 'text' };
 		}

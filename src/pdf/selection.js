@@ -190,18 +190,18 @@ function getLineSelectionRect(line, charFrom, charTo) {
 	}
 }
 
-export function getRectsFromChars(chars) {
+export function getRectsFromChars(chars, rectKey = 'inlineRect') {
 	let lineRects = [];
 	let currentLineRect = null;
 	for (let char of chars) {
 		if (!currentLineRect) {
-			currentLineRect = char.inlineRect.slice();
+			currentLineRect = char[rectKey].slice();
 		}
 		currentLineRect = [
-			Math.min(currentLineRect[0], char.inlineRect[0]),
-			Math.min(currentLineRect[1], char.inlineRect[1]),
-			Math.max(currentLineRect[2], char.inlineRect[2]),
-			Math.max(currentLineRect[3], char.inlineRect[3])
+			Math.min(currentLineRect[0], char[rectKey][0]),
+			Math.min(currentLineRect[1], char[rectKey][1]),
+			Math.max(currentLineRect[2], char[rectKey][2]),
+			Math.max(currentLineRect[3], char[rectKey][3])
 		];
 		if (char.lineBreakAfter) {
 			lineRects.push(currentLineRect);
