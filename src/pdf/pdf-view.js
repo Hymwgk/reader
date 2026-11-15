@@ -3766,12 +3766,20 @@ class PDFView {
 	_handleKeyDown(event) {
 		// TODO: Cursor should be updated on key down/up as well. I.e. for shift and text selection
 		// TODO: Arrows keys should modify selection range when holding shift
+		let key = getKeyCombination(event);
+		// Prevent "open file", "download file" PDF.js keyboard shortcuts
+		// https://github.com/mozilla/pdf.js/wiki/Frequently-Asked-Questions#faq-shortcuts
+
+		if (['Cmd-o', 'Ctrl-o', 'Cmd-s', 'Ctrl-s'].includes(key)) {
+			event.stopPropagation();
+			event.preventDefault();
+			return;
+		}
 		if (this._textAnnotationFocused()) {
 			return;
 		}
 		let alt = event.altKey;
 
-		let key = getKeyCombination(event);
 		let code = getCodeCombination(event);
 		let selectionArrowKey = [
 			'Shift-ArrowLeft',
@@ -3791,15 +3799,8 @@ class PDFView {
 				setTextLayerSelection(this._iframeWindow, this._selectionRanges);
 			}
 		}
-		// Prevent "open file", "download file" PDF.js keyboard shortcuts
-		// https://github.com/mozilla/pdf.js/wiki/Frequently-Asked-Questions#faq-shortcuts
-
-		if (['Cmd-o', 'Ctrl-o', 'Cmd-s', 'Ctrl-s'].includes(key)) {
-			event.stopPropagation();
-			event.preventDefault();
-		}
 		// Prevent full screen
-		else if (['Ctrl-Alt-p', 'Ctrl-Alt-p'].includes(key)) {
+		if (['Ctrl-Alt-p', 'Ctrl-Alt-p'].includes(key)) {
 			event.stopPropagation();
 		}
 		// Prevent PDF.js page view rotation
